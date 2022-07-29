@@ -1,69 +1,49 @@
-// import all models
-const Post = require('./Post');
-const User = require('./User');
-const Vote = require('./Vote');
-const Comment = require('./Comment');
+const Post = require("./PostModel");
+const User = require("./UserModel");
+const Comment = require("./CommentModel");
+const Hero = require("./HeroModel");
 
-// create associations
+// one user can have many posts
 User.hasMany(Post, {
-  foreignKey: 'user_id'
+	foreignKey: "user_id",
+	onDelete: "CASCADE",
 });
 
+// many posts can belong to one user
 Post.belongsTo(User, {
-  foreignKey: 'user_id',
-  onDelete: 'SET NULL'
+	foreignKey: "user_id",
 });
 
-User.belongsToMany(Post, {
-  through: Vote,
-  as: 'voted_posts',
-
-  foreignKey: 'user_id',
-  onDelete: 'SET NULL'
-});
-
-Post.belongsToMany(User, {
-  through: Vote,
-  as: 'voted_posts',
-  foreignKey: 'post_id',
-  onDelete: 'SET NULL'
-});
-
-Vote.belongsTo(User, {
-  foreignKey: 'user_id',
-  onDelete: 'SET NULL'
-});
-
-Vote.belongsTo(Post, {
-  foreignKey: 'post_id',
-  onDelete: 'SET NULL'
-});
-
-User.hasMany(Vote, {
-  foreignKey: 'user_id'
-});
-
-Post.hasMany(Vote, {
-  foreignKey: 'post_id'
-});
-
-Comment.belongsTo(User, {
-  foreignKey: 'user_id',
-  onDelete: 'SET NULL'
-});
-
-Comment.belongsTo(Post, {
-  foreignKey: 'post_id',
-  onDelete: 'SET NULL'
-});
-
+// one user can also have many comments
 User.hasMany(Comment, {
-  foreignKey: 'user_id',
-  onDelete: 'SET NULL'
+	foreignKey: "user_id",
+	onDelete: "CASCADE",
 });
 
+// one comment can only belong to one user
+Comment.belongsTo(User, {
+	foreignKey: "user_id",
+});
+
+//one post can have many comments
 Post.hasMany(Comment, {
-  foreignKey: 'post_id'
+	foreignKey: "post_id",
+	onDelete: "CASCADE",
 });
 
-module.exports = { User, Post, Vote, Comment };
+// but one comment can only belong to one post, just like user
+Comment.belongsTo(Post, {
+	foreignKey: "post_id",
+});
+
+// one post can have many (2) heros
+Post.hasMany(Hero, {
+	foreignKey: "post_id",
+	onDelete: "CASCADE",
+});
+
+// heroes belongs to post
+Hero.belongsTo(Post, {
+	foreignKey: "post_id",
+});
+module.exports = { User, Post, Comment, Hero };
